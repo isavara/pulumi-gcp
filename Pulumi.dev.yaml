@@ -1,0 +1,4 @@
+config:
+  gcp:credentials: /home/src/gcp/credentials.json
+  gcp:project: bigfix-247812
+  gcp:zone: us-east4-a
