@@ -15,22 +15,8 @@ jobs:
       - name: Print current working directory
         run: pwd
 
-      - name: Checkout repository
-        uses: actions/checkout@v3
+      - name: Test secret
+        run: echo $PULUMI_ACCESS_TOKEN  
 
-      - name: Set up Pulumi
-        run: |
-          yum update -y
-          yum install -y tar curl
-          curl -fsSL https://get.pulumi.com | sh
-          echo 'export PATH=$PATH:/home/itadmin/.pulumi/bin' >> ~/.bashrc
-          source ~/.bashrc
-        
-      - name: Create the resources
-        uses: pulumi/actions@v4
-        with:
-          command: up
-          stack-name: sample-pulumi-project-dev
-          work-dir: /home/itadmin/pulumi-runner/actions-runner/_pulumi_work/pulumi-gcp/pulumi-gcp
         env:
-          PULUMI_ACCESS_TOKEN: ${{ secrets.PULUMI_ACCESS_TOKEN }}
+           PULUMI_ACCESS_TOKEN: ${{ secrets.PULUMI_ACCESS_TOKEN }}
