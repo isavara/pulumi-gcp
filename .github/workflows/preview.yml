@@ -21,6 +21,13 @@ jobs:
     steps:
       - name: Print current working directory
         run: pwd
+      
+      - name: Test
+        run: |          
+            echo "GCP_PROJECT...$GCP_PROJECT"         
+            echo "GCP_ZONE...$GCP_ZONE" 
+            echo "PULUMI_ACCESS_TOKEN......$PULUMI_ACCESS_TOKEN"
+            echo "GCP_CREDENTIALS......$GCP_CREDENTIALS" 
 
       - name: Checkout repository
         uses: actions/checkout@v3
