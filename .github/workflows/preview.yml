@@ -20,7 +20,7 @@ jobs:
 
       - name: Initialize Pulumi stack
         run: |
-          pulumi stack init sbsr-ghc-pulumi-org/dev
+          pulumi stack init sbsr-ghc-pulumi-org/sample-pulumi-project/dev-1
 
       - name: Create the resources
         uses: pulumi/actions@v3
