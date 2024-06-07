@@ -27,7 +27,7 @@ jobs:
         shell: bash
 
       - name: Create the resources
-        uses: pulumi/actions@v4
+        uses: pulumi/actions@v3
         with:
           command: up
           stack-name: sample-pulumi-project-dev
