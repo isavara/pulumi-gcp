@@ -1,0 +1,27 @@
+name: branch
+
+on:
+  pull_request:
+    branches: [ "main" ]
+
+  workflow_dispatch:
+
+jobs:
+  pulumi-up:
+    name: pulumi-up
+    runs-on: rome-pulumi-runner-label-1
+    
+    env: 
+      CANDY_SECURE: ${{ secrets.CANY_APPLE_SECURE }}
+      GCP_PROJECT: ${{ vars.GCP_PROJECT }}
+      GCP_ZONE: ${{ vars.GCP_ZONE }}
+
+    steps:
+      - name: Print current working directory
+        run: pwd
+
+      - name: Test
+        run: |          
+            echo "GCP_PROJECT...${{ GCP_PROJECT }}"         
+            #echo "GCP_ZONE...${{ GCP_ZONE }}"  
+         
