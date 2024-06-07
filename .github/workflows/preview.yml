@@ -15,8 +15,14 @@ jobs:
       - name: Print current working directory
         run: pwd
 
-      - name: Test secret
-        run: echo $PULUMI_ACCESS_TOKEN  
+      - name: Checkout repository
+        uses: actions/checkout@v3
 
+      - name: Create the resources
+        uses: pulumi/actions@v4
+        with:
+          command: up
+          stack-name: sample-pulumi-project-dev
+          work-dir: /home/itadmin/pulumi-runner/actions-runner/_pulumi_work/pulumi-gcp/pulumi-gcp
         env:
-           PULUMI_ACCESS_TOKEN: ${{ secrets.PULUMI_ACCESS_TOKEN }}
+          PULUMI_ACCESS_TOKEN: ${{ secrets.PULUMI_ACCESS_TOKEN }}
