@@ -10,19 +10,27 @@ jobs:
   pulumi-up:
     name: pulumi-up
     runs-on: rome-pulumi-runner-label-1
-    steps:
 
+    steps:
       - name: Print current working directory
         run: pwd
 
       - name: Checkout repository
         uses: actions/checkout@v3
 
+      - name: Set up Pulumi
+        run: |
+          sudo yum update -y
+          sudo yum install -y tar curl
+          curl -fsSL https://get.pulumi.com | sh
+          export PATH=$PATH:/root/.pulumi/bin  # Adjust if necessary
+        shell: bash
+
       - name: Create the resources
         uses: pulumi/actions@v4
         with:
           command: up
           stack-name: sample-pulumi-project-dev
-          work-dir: /home/itadmin/pulumi-runner/actions-runner/_pulumi_work/pulumi-gcp/pulumi-gcp      
+          work-dir: /home/itadmin/pulumi-runner/actions-runner/_pulumi_work/pulumi-gcp/pulumi-gcp
         env:
           PULUMI_ACCESS_TOKEN: ${{ secrets.PULUMI_ACCESS_TOKEN }}
