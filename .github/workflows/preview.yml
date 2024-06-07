@@ -11,7 +11,7 @@ jobs:
     name: pulumi-up
     runs-on: rome-pulumi-runner-label-1
     steps:
-      
+
       - name: Print current working directory
         run: pwd
 
@@ -22,6 +22,7 @@ jobs:
         uses: pulumi/actions@v3
         with:
           command: up
-          stack-name: sample-pulumi-project-dev          
+          stack-name: sample-pulumi-project-dev
+          work-dir: /home/itadmin/pulumi-runner/actions-runner/_pulumi_work/pulumi-gcp/pulumi-gcp      
         env:
           PULUMI_ACCESS_TOKEN: ${{ secrets.PULUMI_ACCESS_TOKEN }}
