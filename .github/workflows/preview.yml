@@ -29,14 +29,15 @@ jobs:
         id: check_stack
         run: |
           pulumi stack select sbsr-ghc-pulumi-org/sample-pulumi-project/dev-1 || echo "STACK_DOES_NOT_EXIST"
-          pulumi config set gcp:project $GCP_PROJECT
-          pulumi config set gcp:zone $GCP_ZONE
-          pulumi config set gcp:credentials $GCP_CREDENTIALS
+
 
       - name: Initialize Pulumi stack if it doesn't exist
         if: steps.check_stack.outputs.check_stack == 'STACK_DOES_NOT_EXIST'
         run: |
           pulumi stack init sbsr-ghc-pulumi-org/sample-pulumi-project/dev-1
+          pulumi config set gcp:project $GCP_PROJECT
+          pulumi config set gcp:zone $GCP_ZONE
+          pulumi config set gcp:credentials $GCP_CREDENTIALS
 
       - name: Create the resources
         uses: pulumi/actions@v3
