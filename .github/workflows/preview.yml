@@ -11,12 +11,15 @@ jobs:
     name: pulumi-up
     runs-on: rome-pulumi-runner-label-1
     steps:
+      
+      - name: Print current working directory
+        run: pwd
 
       - name: Checkout repository
         uses: actions/checkout@v3
 
       - name: Create the resources
-        uses: pulumi/actions@v5
+        uses: pulumi/actions@v3
         with:
           command: up
           stack-name: sample-pulumi-project-dev          
