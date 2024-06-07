@@ -20,14 +20,15 @@ jobs:
 
       - name: Set up Pulumi
         run: |
-          sudo yum update -y
-          sudo yum install -y tar curl
+          yum update -y
+          yum install -y tar curl
           curl -fsSL https://get.pulumi.com | sh
-          export PATH=$PATH:/home/itadmin/.pulumi/bin  # Adjust if necessary
+          echo 'export PATH=$PATH:/home/itadmin/.pulumi/bin' >> ~/.bashrc
+          source ~/.bashrc
         shell: bash
 
       - name: Create the resources
-        uses: pulumi/actions@v3
+        uses: pulumi/actions@v4
         with:
           command: up
           stack-name: sample-pulumi-project-dev
