@@ -11,15 +11,11 @@ jobs:
     name: pulumi-up
     runs-on: rome-pulumi-runner-label-1
     
-    env:      
-      GCP_PROJECT: ${{ vars.GCP_PROJECT }}
-      GCP_ZONE: ${{ vars.GCP_ZONE }}
-
     steps:
       - name: Print current working directory
         run: pwd
 
       - name: Test
         run: |          
-            echo "GCP_PROJECT...${{ env.GCP_PROJECT }}"         
-            echo "GCP_ZONE...${{ env.GCP_ZONE }}"  
+            echo "GCP_PROJECT...${{ vars.GCP_PROJECT }}"         
+            echo "GCP_ZONE...${{ vars.GCP_ZONE }}"  
