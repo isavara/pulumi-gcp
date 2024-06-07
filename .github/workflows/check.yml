@@ -12,8 +12,8 @@ jobs:
     runs-on: rome-pulumi-runner-label-1
     
     env:      
-      GCP_PROJECT: ${{ secrets.GCP_PROJECT }}
-      GCP_ZONE: ${{ secrets.GCP_ZONE }}
+      GCP_PROJECT: ${{ vars.GCP_PROJECT }}
+      GCP_ZONE: ${{ vars.GCP_ZONE }}
 
     steps:
       - name: Print current working directory
