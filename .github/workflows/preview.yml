@@ -26,7 +26,7 @@ jobs:
         uses: pulumi/actions@v3
         with:
           command: up
-          stack-name: sample-pulumi-project-dev
+          stack-name: sbsr-ghc-pulumi-org/sample-pulumi-project/dev-1
           work-dir: /home/itadmin/pulumi-runner/actions-runner/_pulumi_work/pulumi-gcp/pulumi-gcp
         env:
           PULUMI_ACCESS_TOKEN: ${{ secrets.PULUMI_ACCESS_TOKEN }}
