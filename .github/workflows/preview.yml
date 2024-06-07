@@ -18,6 +18,10 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
+      - name: Initialize Pulumi stack
+        run: |
+          pulumi stack init sbsr-ghc-pulumi-org/dev
+
       - name: Create the resources
         uses: pulumi/actions@v3
         with:
