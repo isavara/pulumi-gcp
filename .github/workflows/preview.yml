@@ -23,7 +23,7 @@ jobs:
           sudo yum update -y
           sudo yum install -y tar curl
           curl -fsSL https://get.pulumi.com | sh
-          export PATH=$PATH:/root/.pulumi/bin  # Adjust if necessary
+          export PATH=$PATH:/home/itadmin/.pulumi/bin  # Adjust if necessary
         shell: bash
 
       - name: Create the resources
