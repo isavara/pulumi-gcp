@@ -38,7 +38,13 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Print current working directory
-        run: pwd  
+        run: pwd
+        
+      - name: check pulumi version
+        run: pulumi version
+
+      - name: check gcloud version
+        run: gcloud --version       
 
       - name: Check if stack exists
         id: check_stack
