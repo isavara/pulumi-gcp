@@ -23,10 +23,8 @@ jobs:
 
       - name: Set Google Cloud credentials
         run: |
-          echo "$GCP_CREDENTIALS" > /home/itadmin/sa/service-account-key.json
-          
-      - name: Print current working directory
-        run: pwd
+          echo "$GCP_CREDENTIALS" > /home/itadmin/sa/service-account-key.json    
+
       
       - name: Test
         run: |          
@@ -38,6 +36,9 @@ jobs:
 
       - name: Checkout repository
         uses: actions/checkout@v3
+
+      - name: Print current working directory
+        run: pwd  
 
       - name: Check if stack exists
         id: check_stack
