@@ -23,7 +23,7 @@ jobs:
 
       - name: Set Google Cloud credentials
         run: |
-          echo "$GCP_CREDENTIALS" > /home/itadmin/pulumi-runner/actions-runner/_pulumi_work/pulumi-gcp/pulumi-gcp/service-account-key.json
+          echo "$GCP_CREDENTIALS" > /home/itadmin/sa/service-account-key.json
           
       - name: Print current working directory
         run: pwd
@@ -51,6 +51,6 @@ jobs:
           pulumi stack init sbsr-ghc-pulumi-org/sample-pulumi-project/dev-1
           pulumi config set gcp:project $GCP_PROJECT
           pulumi config set gcp:zone $GCP_ZONE
-          pulumi config set gcp:credentials /home/itadmin/pulumi-runner/actions-runner/_pulumi_work/pulumi-gcp/pulumi-gcp/service-account-key.json          
-          gcloud auth activate-service-account $GCP_SERVICE_ACCOUNT --key-file=/home/itadmin/pulumi-runner/actions-runner/_pulumi_work/pulumi-gcp/pulumi-gcp/service-account-key.json
+          pulumi config set gcp:credentials /home/itadmin/sa/service-account-key.json          
+          gcloud auth activate-service-account $GCP_SERVICE_ACCOUNT --key-file=/home/itadmin/sa/service-account-key.json
           pulumi up --yes
