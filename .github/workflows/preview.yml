@@ -48,8 +48,11 @@ jobs:
 
       - name: Check if stack exists
         id: check_stack
+        run: pulumi stack select sbsr-ghc-pulumi-org/sample-pulumi-project/dev-1 || echo "STACK_DOES_EXIST"
+
+      - name: Print stack existence check result        
         run: |
-          pulumi stack select sbsr-ghc-pulumi-org/sample-pulumi-project/dev-1 || echo "STACK_DOES_NOT_EXIST"
+          echo "Stack existence check result: ${{ steps.check_stack.outputs.check_stack }}"
 
 
       - name: Initialize Pulumi stack if it doesn't exist
