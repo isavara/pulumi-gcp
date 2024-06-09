@@ -3,11 +3,19 @@ name: Preview
 on:
   pull_request:
     types: [opened, synchronize, reopened, labeled]
-    branches: [ "main" ]
-
+    branches: [main]
   workflow_dispatch:
 
 jobs:
+  test-label-trigger:
+    name: Test Label Trigger
+    runs-on: ubuntu-latest
+    if: ${{ github.event_name == 'pull_request' && github.event.action == 'opened' }}
+    steps:
+      - name: Echo Label
+        run: |
+          echo "Label triggered: ${{ github.event.label.name }}"
+
   pulumi-up:
     name: pulumi-up
     runs-on: pulumi-rome-runner-label-1
@@ -55,6 +63,7 @@ jobs:
 
       - name: Initialize Pulumi stack if it doesn't exist        
         run: pulumi stack init sbsr-ghc-pulumi-org/sample-pulumi-project/dev-1 
+
 
       # Uncomment the following steps as needed
       # - name: Create pulumi configuration
