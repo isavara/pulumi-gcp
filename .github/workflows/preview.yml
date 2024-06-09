@@ -47,7 +47,7 @@ jobs:
       - name: Check if stack exists
         id: check_stack
         run: |
-           run: pulumi stack ls | grep -q "sbsr-ghc-pulumi-org/dev-1" && echo "STACK_DOES_EXIST" || echo "STACK_DOES_NOT_EXIST"
+           pulumi stack ls | grep -q "sbsr-ghc-pulumi-org/dev-1" && echo "STACK_DOES_EXIST" || echo "STACK_DOES_NOT_EXIST"
       
       - name: Print stack existence check result        
         run: |
