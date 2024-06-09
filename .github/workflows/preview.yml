@@ -47,8 +47,7 @@ jobs:
       - name: Check if stack exists
         id: check_stack
         run: |
-           pulumi stack ls | grep -q "sbsr-ghc-pulumi-org/dev-1" && echo "result=STACK_DOES_EXIST" || echo "result=STACK_DOES_NOT_EXIST" >> $GITHUB_OUTPUT
-      
+           pulumi stack ls | grep -q "sbsr-ghc-pulumi-org/dev-1" && echo "::set-output name=result::STACK_DOES_EXIST" || echo "::set-output name=result::STACK_DOES_NOT_EXIST"      
       - name: Print stack existence check result        
         run: |
            echo "Stack existence check result: ${{ steps.check_stack.outputs.result }}"
