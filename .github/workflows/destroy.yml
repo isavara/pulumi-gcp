@@ -10,11 +10,12 @@ jobs:
   test-label-trigger:
     name: Test Label Trigger
     runs-on: ubuntu-latest
-    if: ${{ github.event_name == 'pull_request' && github.event.action == 'opened' }}
     steps:
       - name: Echo Label
+        if: ${{ github.event_name == 'pull_request' && github.event.action == 'labeled' }}
         run: |
-          echo "Label triggered: ${{ github.event.label.name }}"    
+          echo "Label triggered: ${{ github.event.label.name }}"
+  
 
   pulumi-destroy:
     name: pulumi-destroy
