@@ -56,7 +56,7 @@ jobs:
 
 
       - name: Destroy Infra        
-        uses: pulumi/actions@v5
+        uses: pulumi/actions@v3
         with:
             command: destroy
             stack-name: sbsr-ghc-pulumi-org/sample-pulumi-project/dev-1
