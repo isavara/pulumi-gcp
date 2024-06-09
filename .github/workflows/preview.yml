@@ -1,10 +1,15 @@
-name: branch
+name: Preview
 
 on:
   pull_request:
     branches: [ "main" ]
 
   workflow_dispatch:
+    inputs:
+      trigger:
+        description: 'Trigger the preview workflow'
+        required: true
+        default: 'true'
 
 jobs:
   pulumi-up:
@@ -20,12 +25,10 @@ jobs:
       GCP_SERVICE_ACCOUNT: ${{ vars.GCP_SERVICE_ACCOUNT }}
 
     steps:
-
       - name: Set Google Cloud credentials
         run: |
           echo "$GCP_CREDENTIALS" > /home/itadmin/sa/service-account-key.json    
 
-      
       - name: Test
         run: |          
             echo "GCP_PROJECT...$GCP_PROJECT"         
@@ -40,25 +43,33 @@ jobs:
       - name: Print current working directory
         run: pwd
         
-      - name: check pulumi version
+      - name: Check Pulumi version
         run: pulumi version
 
-      - name: check gcloud version
+      - name: Check gcloud version
         run: gcloud --version       
 
       - name: Check if stack exists
         id: check_stack
         run: pulumi stack select sbsr-ghc-pulumi-org/sample-pulumi-project/dev-1 || echo "STACK_DOES_EXIST"
 
-      # - name: Print stack existence check result        
-      #   run: |
-      #     echo "Stack existence check result: ${{ steps.check_stack.outputs.check_stack }}"
-
+      - name: Print stack existence check result        
+        run: |
+           echo "Stack existence check result: ${{ steps.check_stack.outputs.check_stack }}"
 
       - name: Initialize Pulumi stack if it doesn't exist        
-        run: |          
-          pulumi config set gcp:project $GCP_PROJECT
-          pulumi config set gcp:zone $GCP_ZONE
-          pulumi config set gcp:credentials /home/itadmin/sa/service-account-key.json          
-          gcloud auth activate-service-account $GCP_SERVICE_ACCOUNT --key-file=/home/itadmin/sa/service-account-key.json
-          pulumi up --yes
+        run: pulumi stack init sbsr-ghc-pulumi-org/sample-pulumi-project/dev-1 
+
+      # Uncomment the following steps as needed
+      # - name: Create pulumi configuration
+      #   run: | 
+      #      pulumi config set gcp:project $GCP_PROJECT 
+      #      pulumi config set gcp:zone $GCP_ZONE
+      #      pulumi config set gcp:credentials /home/itadmin/sa/service-account-key.json          
+      #      gcloud auth activate-service-account $GCP_SERVICE_ACCOUNT --key-file=/home/itadmin/sa/service-account-key.json
+
+      # - name: Create GKE resources
+      #   uses: pulumi/actions@v3
+      #   with:
+      #     command: up
+      #     stack-name: sbsr-ghc-pulumi-org/sample-pulumi-project/dev-1

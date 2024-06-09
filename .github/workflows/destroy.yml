@@ -1,10 +1,15 @@
-name: destroy
+name: Destroy
 
 on:
   pull_request:
     branches: [ "main" ]
 
   workflow_dispatch:
+    inputs:
+      trigger:
+        description: 'Trigger the destroy workflow'
+        required: true
+        default: 'true'
 
 jobs:
   pulumi-destroy:
@@ -20,12 +25,10 @@ jobs:
       GCP_SERVICE_ACCOUNT: ${{ vars.GCP_SERVICE_ACCOUNT }}
 
     steps:
-
       - name: Set Google Cloud credentials
         run: |
           echo "$GCP_CREDENTIALS" > /home/itadmin/sa/service-account-key.json    
 
-      
       - name: Test
         run: |          
             echo "GCP_PROJECT...$GCP_PROJECT"         
@@ -40,23 +43,23 @@ jobs:
       - name: Print current working directory
         run: pwd
         
-      - name: check pulumi version
+      - name: Check Pulumi version
         run: pulumi version
 
-      - name: check gcloud version
+      - name: Check gcloud version
         run: gcloud --version       
 
       - name: Check if stack exists
         id: check_stack
         run: pulumi stack select sbsr-ghc-pulumi-org/sample-pulumi-project/dev-1 || echo "STACK_DOES_EXIST"
 
+      # Uncomment the following step if needed
       # - name: Print stack existence check result        
       #   run: |
       #     echo "Stack existence check result: ${{ steps.check_stack.outputs.check_stack }}"
 
-
       - name: Destroy Infra        
         uses: pulumi/actions@v3
         with:
-            command: destroy
-            stack-name: sbsr-ghc-pulumi-org/sample-pulumi-project/dev-1
+          command: destroy
+          stack-name: sbsr-ghc-pulumi-org/sample-pulumi-project/dev-1
