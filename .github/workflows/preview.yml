@@ -51,7 +51,7 @@ jobs:
       
       - name: Print stack existence check result        
         run: |
-           echo "Stack existence check result: ${{ steps.check_stack.outputs.stdout }}"
+           echo "Stack existence check result: ${{ steps.check_stack.outputs.check_stack_output }}"
       
 
       # - name: Initialize Pulumi stack if it doesn't exist        
