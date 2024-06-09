@@ -1,21 +1,12 @@
 name: Preview
 
 on:
-  pull_request:
-    types: [opened, synchronize, reopened, labeled]
+  push:
     branches: [main]
-  workflow_dispatch:
+  pull_request:
+    branches: [main]
 
 jobs:
-  test-label-trigger:
-    name: Test Label Trigger
-    runs-on: ubuntu-latest
-    steps:
-      - name: Echo Label
-        if: ${{ github.event_name == 'pull_request' && github.event.action == 'labeled' }}
-        run: |
-          echo "Label triggered: ${{ github.event.label.name }}"
-
   pulumi-up:
     name: pulumi-up
     runs-on: pulumi-rome-runner-label-1
