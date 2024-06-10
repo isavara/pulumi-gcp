@@ -97,6 +97,7 @@ jobs:
         with:
           command: up
           stack-name: ${{ env.PULUMI_STACK }} 
+          args: --yes --logtostderr --non-interactive
 
       - name: Destroy GKE resources
         if: env.ACTION == 'destroy'        
@@ -104,3 +105,4 @@ jobs:
         with:
           command: destroy
           stack-name: ${{ env.PULUMI_STACK }}
+          args: --yes --logtostderr --non-interactive
