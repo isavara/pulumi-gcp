@@ -81,7 +81,8 @@ jobs:
            pulumi stack init $PULUMI_STACK
 
       - name: Create pulumi configuration
-        run: | 
+        run: |
+           pulumi stack select --stack $PULUMI_STACK --non-interactive 
            pulumi config set gcp:project $GCP_PROJECT 
            pulumi config set gcp:zone $GCP_ZONE
            pulumi config set gcp:credentials /home/itadmin/sa/service-account-key.json          
