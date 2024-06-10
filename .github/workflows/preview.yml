@@ -120,7 +120,7 @@ jobs:
         if: env.ACTION == 'up'
         run: |
           pulumi stack output kubeconfig --show-secrets > cluster.conf
-          mkdir -p /root/.kube/
-          cp cluster.conf /root/.kube/config
+          mkdir -p /home/itadmin/ws/.kube/
+          cp cluster.conf /home/itadmin/ws/.kube/config
           gcloud auth activate-service-account --key-file=/home/itadmin/sa/service-account-key.json
-          kubectl get nodes > /home/itadmin/sa/node-info.html     
+          kubectl get nodes > /home/itadmin/ws/node-info.html     
