@@ -99,7 +99,7 @@ jobs:
         uses: pulumi/actions@v3
         with:
           command: destroy
-          stack-name: $PULUMI_STACK     
+          stack-name: ${{ env.PULUMI_STACK }}    
 
       # - name: Create GKE resources
       #   uses: pulumi/actions@v3
