@@ -91,17 +91,28 @@ jobs:
            gcloud auth activate-service-account $GCP_SERVICE_ACCOUNT --key-file=/home/itadmin/sa/service-account-key.json
            
 
+      # - name: Deploy GKE resources
+      #   if: env.ACTION == 'up' 
+      #   uses: pulumi/actions@v3
+      #   with:
+      #     command: up --yes --logtostderr --non-interactive
+      #     stack-name: ${{ env.PULUMI_STACK }} 
+          
+      # - name: Destroy GKE resources
+      #   if: env.ACTION == 'destroy'        
+      #   uses: pulumi/actions@v3
+      #   with:
+      #     command: destroy --yes --logtostderr --non-interactive
+      #     stack-name: ${{ env.PULUMI_STACK }}
+      
+          
       - name: Deploy GKE resources
-        if: env.ACTION == 'up' 
-        uses: pulumi/actions@v3
-        with:
-          command: up --yes --logtostderr --non-interactive
-          stack-name: ${{ env.PULUMI_STACK }} 
-          
+        if: env.ACTION == 'up'         
+        run: |
+           pulumi up --yes --logtostderr --non-interactive           
+        
       - name: Destroy GKE resources
-        if: env.ACTION == 'destroy'        
-        uses: pulumi/actions@v3
-        with:
-          command: destroy --yes --logtostderr --non-interactive
-          stack-name: ${{ env.PULUMI_STACK }}
-          
+        if: env.ACTION == 'destroy'
+        run: |
+           pulumi destroy --yes --logtostderr --non-interactive
+           
