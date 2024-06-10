@@ -24,7 +24,7 @@ func main() {
 	fmt.Println("SUB_NETWORK:", subnetwork)
 	fmt.Println("MACHINE_TYPE:", machineType)
 	fmt.Println("NODE_COUNT:", nodeCountStr)
-	fmt.Println("PULUMI_STACK:", clusterName)
+	fmt.Println("GKE_CLUSTER_NAME:", clusterName)
 
 	// Convert nodeCountStr to an integer
 	nodeCount, err := strconv.Atoi(nodeCountStr)
