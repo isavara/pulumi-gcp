@@ -87,9 +87,10 @@ jobs:
            pulumi config set gcp:zone $GCP_ZONE
            pulumi config set gcp:credentials /home/itadmin/sa/service-account-key.json          
            gcloud auth activate-service-account $GCP_SERVICE_ACCOUNT --key-file=/home/itadmin/sa/service-account-key.json
+           pulumi up --yes
 
-      - name: Create GKE resources
-        uses: pulumi/actions@v3
-        with:
-          command: up
-          stack-name: $PULUMI_STACK
+      # - name: Create GKE resources
+      #   uses: pulumi/actions@v3
+      #   with:
+      #     command: up
+      #     stack-name: $PULUMI_STACK
