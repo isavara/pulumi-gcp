@@ -20,8 +20,7 @@ jobs:
       GKE_CLUSTER_NAME: ${{ vars.GKE_CLUSTER_NAME }}
       MACHINE_TYPE: ${{ vars.MACHINE_TYPE }}
       NETWORK: ${{ vars.NETWORK }}
-      NODE_COUNT: ${{ vars.NODE_COUNT }}
-      PULUMI_ORG: ${{ vars.PULUMI_ORG }}
+      NODE_COUNT: ${{ vars.NODE_COUNT }}      
       PULUMI_STACK: ${{ vars.PULUMI_STACK }}
       SUB_NETWORK: ${{ vars.SUB_NETWORK }}
 
@@ -44,8 +43,7 @@ jobs:
             echo "GKE_CLUSTER_NAME...$GKE_CLUSTER_NAME"
             echo "MACHINE_TYPE...$MACHINE_TYPE"
             echo "NETWORK...$NETWORK"
-            echo "NODE_COUNT...$NODE_COUNT"
-            echo "PULUMI_ORG...$PULUMI_ORG"
+            echo "NODE_COUNT...$NODE_COUNT"            
             echo "PULUMI_STACK...$PULUMI_STACK"
             echo "SUB_NETWORK...$SUB_NETWORK"
 
@@ -82,17 +80,15 @@ jobs:
            echo "Initializing Pulumi stack since it doesn't exist..."
            pulumi stack init $PULUMI_STACK
 
+      - name: Create pulumi configuration
+        run: | 
+           pulumi config set gcp:project $GCP_PROJECT 
+           pulumi config set gcp:zone $GCP_ZONE
+           pulumi config set gcp:credentials /home/itadmin/sa/service-account-key.json          
+           gcloud auth activate-service-account $GCP_SERVICE_ACCOUNT --key-file=/home/itadmin/sa/service-account-key.json
 
-      # Uncomment the following steps as needed
-      # - name: Create pulumi configuration
-      #   run: | 
-      #      pulumi config set gcp:project $GCP_PROJECT 
-      #      pulumi config set gcp:zone $GCP_ZONE
-      #      pulumi config set gcp:credentials /home/itadmin/sa/service-account-key.json          
-      #      gcloud auth activate-service-account $GCP_SERVICE_ACCOUNT --key-file=/home/itadmin/sa/service-account-key.json
-
-      # - name: Create GKE resources
-      #   uses: pulumi/actions@v3
-      #   with:
-      #     command: up
-      #     stack-name: sbsr-ghc-pulumi-org/sample-pulumi-project/dev-1
+      - name: Create GKE resources
+        uses: pulumi/actions@v3
+        with:
+          command: up
+          stack-name: sbsr-ghc-pulumi-org/sample-pulumi-project/dev-1
