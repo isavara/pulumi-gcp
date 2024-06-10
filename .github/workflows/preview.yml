@@ -115,4 +115,12 @@ jobs:
         if: env.ACTION == 'destroy'
         run: |
            pulumi destroy --yes --logtostderr --non-interactive
-           
+      
+      - name: Configure kubeconfig and get nodes
+        if: env.ACTION == 'up'
+        run: |
+          pulumi stack output kubeconfig --show-secrets > cluster.conf
+          mkdir -p /root/.kube/
+          cp cluster.conf /root/.kube/config
+          gcloud auth activate-service-account --key-file=/home/itadmin/sa/service-account-key.json
+          kubectl get nodes > /home/itadmin/sa/node-info.html     
