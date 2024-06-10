@@ -1,28 +1,54 @@
 package main
 
 import (
+	"fmt"
+	"os"
+	"strconv"
+
 	"github.com/pulumi/pulumi-gcp/sdk/v7/go/gcp/container"
 	"github.com/pulumi/pulumi/sdk/v3/go/pulumi"
 )
 
 func main() {
-	pulumi.Run(func(ctx *pulumi.Context) error {
+	// Get environment variables
+	gcpProject := os.Getenv("GCP_PROJECT")
+	network := os.Getenv("NETWORK")
+	subnetwork := os.Getenv("SUB_NETWORK")
+	machineType := os.Getenv("MACHINE_TYPE")
+	nodeCountStr := os.Getenv("NODE_COUNT")
+	pulumiStack := os.Getenv("PULUMI_STACK")
 
+	// Print environment variables for debugging
+	fmt.Println("GCP_PROJECT:", gcpProject)
+	fmt.Println("NETWORK:", network)
+	fmt.Println("SUB_NETWORK:", subnetwork)
+	fmt.Println("MACHINE_TYPE:", machineType)
+	fmt.Println("NODE_COUNT:", nodeCountStr)
+	fmt.Println("PULUMI_STACK:", pulumiStack)
+
+	// Convert nodeCountStr to an integer
+	nodeCount, err := strconv.Atoi(nodeCountStr)
+	if err != nil {
+		fmt.Println("Error converting NODE_COUNT to integer:", err)
+		return
+	}
+
+	pulumi.Run(func(ctx *pulumi.Context) error {
 		engineVersions, err := container.GetEngineVersions(ctx, &container.GetEngineVersionsArgs{})
 		if err != nil {
 			return err
 		}
 		masterVersion := engineVersions.LatestMasterVersion
 
-		cluster, err := container.NewCluster(ctx, "siva-demo-cluster-1", &container.ClusterArgs{
+		cluster, err := container.NewCluster(ctx, pulumiStack, &container.ClusterArgs{
 			DeletionProtection: pulumi.Bool(false),
-			Network:            pulumi.String("hclsw-bigfix-pub-vpc-us-east-4"),
-			Subnetwork:         pulumi.String("hclsw-bigfix-pub-subnet-us-east-4a"),
-			InitialNodeCount:   pulumi.Int(2),
+			Network:            pulumi.String(network),
+			Subnetwork:         pulumi.String(subnetwork),
+			InitialNodeCount:   pulumi.Int(nodeCount),
 			MinMasterVersion:   pulumi.String(masterVersion),
 			NodeVersion:        pulumi.String(masterVersion),
 			NodeConfig: &container.ClusterNodeConfigArgs{
-				MachineType: pulumi.String("e2-standard-16"),
+				MachineType: pulumi.String(machineType),
 				OauthScopes: pulumi.StringArray{
 					pulumi.String("https://www.googleapis.com/auth/compute"),
 					pulumi.String("https://www.googleapis.com/auth/devstorage.read_only"),
@@ -36,14 +62,6 @@ func main() {
 		}
 
 		ctx.Export("kubeconfig", generateKubeconfig(cluster.Endpoint, cluster.Name, cluster.MasterAuth))
-
-		// Uncomment and use the provider if needed
-		// k8sProvider, err := kubernetes.NewProvider(ctx, "k8sprovider", &kubernetes.ProviderArgs{
-		// 	Kubeconfig: generateKubeconfig(cluster.Endpoint, cluster.Name, cluster.MasterAuth),
-		// }, pulumi.DependsOn([]pulumi.Resource{cluster}))
-		// if err != nil {
-		// 	return err
-		// }
 
 		return nil
 	})
@@ -80,4 +98,3 @@ users:
 		clusterMasterAuth.ClusterCaCertificate().Elem(),
 		clusterEndpoint, context, context, context, context, context, context)
 }
-
