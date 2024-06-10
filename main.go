@@ -16,7 +16,7 @@ func main() {
 	subnetwork := os.Getenv("SUB_NETWORK")
 	machineType := os.Getenv("MACHINE_TYPE")
 	nodeCountStr := os.Getenv("NODE_COUNT")
-	pulumiStack := os.Getenv("PULUMI_STACK")
+	clusterName := os.Getenv("GKE_CLUSTER_NAME")
 
 	// Print environment variables for debugging
 	fmt.Println("GCP_PROJECT:", gcpProject)
@@ -24,7 +24,7 @@ func main() {
 	fmt.Println("SUB_NETWORK:", subnetwork)
 	fmt.Println("MACHINE_TYPE:", machineType)
 	fmt.Println("NODE_COUNT:", nodeCountStr)
-	fmt.Println("PULUMI_STACK:", pulumiStack)
+	fmt.Println("PULUMI_STACK:", clusterName)
 
 	// Convert nodeCountStr to an integer
 	nodeCount, err := strconv.Atoi(nodeCountStr)
@@ -40,7 +40,7 @@ func main() {
 		}
 		masterVersion := engineVersions.LatestMasterVersion
 
-		cluster, err := container.NewCluster(ctx, pulumiStack, &container.ClusterArgs{
+		cluster, err := container.NewCluster(ctx, clusterName, &container.ClusterArgs{
 			DeletionProtection: pulumi.Bool(false),
 			Network:            pulumi.String(network),
 			Subnetwork:         pulumi.String(subnetwork),
