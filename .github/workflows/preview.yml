@@ -2,9 +2,12 @@ name: Preview
 
 on:
   push:
-    branches: [main]
+    branches: [ "*" ]
   pull_request:
-    branches: [main]
+    # Exclude branches with release versions and master
+    branches-ignore:
+      - main
+      - 'v*.*'  
 
 jobs:
   pulumi-up:
@@ -17,14 +20,12 @@ jobs:
       GCP_PROJECT: ${{ vars.GCP_PROJECT }}
       GCP_ZONE: ${{ vars.GCP_ZONE }}
       GCP_SERVICE_ACCOUNT: ${{ vars.GCP_SERVICE_ACCOUNT }}
-
       GKE_CLUSTER_NAME: ${{ vars.GKE_CLUSTER_NAME }}
       MACHINE_TYPE: ${{ vars.MACHINE_TYPE }}
       NETWORK: ${{ vars.NETWORK }}
       NODE_COUNT: ${{ vars.NODE_COUNT }}      
       PULUMI_STACK: ${{ vars.PULUMI_STACK }}
       SUB_NETWORK: ${{ vars.SUB_NETWORK }}
-
       PULUMI_ACCESS_TOKEN: ${{ secrets.PULUMI_ACCESS_TOKEN }}
       GCP_CREDENTIALS: ${{ secrets.GCP_CREDENTIALS }}
       
