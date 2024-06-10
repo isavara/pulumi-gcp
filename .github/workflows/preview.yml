@@ -15,22 +15,40 @@ jobs:
     env:
       GCP_PROJECT: ${{ vars.GCP_PROJECT }}
       GCP_ZONE: ${{ vars.GCP_ZONE }}
+      GCP_SERVICE_ACCOUNT: ${{ vars.GCP_SERVICE_ACCOUNT }}
+
+      GKE_CLUSTER_NAME: ${{ vars.GKE_CLUSTER_NAME }}
+      MACHINE_TYPE: ${{ vars.MACHINE_TYPE }}
+      NETWORK: ${{ vars.NETWORK }}
+      NODE_COUNT: ${{ vars.NODE_COUNT }}
+      PULUMI_ORG: ${{ vars.PULUMI_ORG }}
+      PULUMI_STACK: ${{ vars.PULUMI_STACK }}
+      SUB_NETWORK: ${{ vars.SUB_NETWORK }}
+
       PULUMI_ACCESS_TOKEN: ${{ secrets.PULUMI_ACCESS_TOKEN }}
       GCP_CREDENTIALS: ${{ secrets.GCP_CREDENTIALS }}
-      GCP_SERVICE_ACCOUNT: ${{ vars.GCP_SERVICE_ACCOUNT }}
+      
 
     steps:
       - name: Set Google Cloud credentials
         run: |
           echo "$GCP_CREDENTIALS" > /home/itadmin/sa/service-account-key.json    
 
-      - name: Test
+      - name: Print Env Variables
         run: |          
             echo "GCP_PROJECT...$GCP_PROJECT"         
             echo "GCP_ZONE...$GCP_ZONE" 
             echo "PULUMI_ACCESS_TOKEN......$PULUMI_ACCESS_TOKEN"
             echo "GCP_CREDENTIALS......$GCP_CREDENTIALS"
-            echo "GCP_SERVICE_ACCOUNT...$GCP_SERVICE_ACCOUNT" 
+            echo "GCP_SERVICE_ACCOUNT...$GCP_SERVICE_ACCOUNT"
+            echo "GKE_CLUSTER_NAME...$GKE_CLUSTER_NAME"
+            echo "MACHINE_TYPE...$MACHINE_TYPE"
+            echo "NETWORK...$NETWORK"
+            echo "NODE_COUNT...$NODE_COUNT"
+            echo "PULUMI_ORG...$PULUMI_ORG"
+            echo "PULUMI_STACK...$PULUMI_STACK"
+            echo "SUB_NETWORK...$SUB_NETWORK"
+
 
       - name: Checkout repository
         uses: actions/checkout@v3
@@ -42,21 +60,12 @@ jobs:
         run: pulumi version
 
       - name: Check gcloud version
-        run: gcloud --version       
-
-      # - name: Check if stack exists
-      #   id: check_stack
-      #   run: |
-      #      pulumi stack ls | grep -q "sbsr-ghc-pulumi-org/dev-1" && echo "::set-output name=result::STACK_DOES_EXIST" || echo "::set-output name=result::STACK_DOES_NOT_EXIST"      
-      
-      # - name: Print stack existence check result        
-      #   run: |
-      #      echo "Stack existence check result: ${{ steps.check_stack.outputs.result }}"
+        run: gcloud --version 
 
       - name: Check if stack exists
         id: check_stack
         run: |
-          if pulumi stack ls | grep -q "sbsr-ghc-pulumi-org/dev-1"; then
+          if pulumi stack ls | grep -q $PULUMI_STACK; then
             echo "result=STACK_DOES_EXIST" >> $GITHUB_OUTPUT
           else
             echo "result=STACK_DOES_NOT_EXIST" >> $GITHUB_OUTPUT
@@ -71,7 +80,7 @@ jobs:
         if: steps.check_stack.outputs.result == 'STACK_DOES_NOT_EXIST'
         run: |
            echo "Initializing Pulumi stack since it doesn't exist..."
-           pulumi stack init sbsr-ghc-pulumi-org/sample-pulumi-project/dev-1
+           pulumi stack init $PULUMI_ORG/$PULUMI_STACK
 
 
       # Uncomment the following steps as needed
