@@ -80,7 +80,7 @@ jobs:
         if: steps.check_stack.outputs.result == 'STACK_DOES_NOT_EXIST'
         run: |
            echo "Initializing Pulumi stack since it doesn't exist..."
-           pulumi stack init $PULUMI_ORG/$PULUMI_STACK
+           pulumi stack init $PULUMI_STACK
 
 
       # Uncomment the following steps as needed
