@@ -95,14 +95,13 @@ jobs:
         if: env.ACTION == 'up' 
         uses: pulumi/actions@v3
         with:
-          command: up
+          command: up --yes --logtostderr --non-interactive
           stack-name: ${{ env.PULUMI_STACK }} 
-          args: --yes --logtostderr --non-interactive
-
+          
       - name: Destroy GKE resources
         if: env.ACTION == 'destroy'        
         uses: pulumi/actions@v3
         with:
-          command: destroy
+          command: destroy --yes --logtostderr --non-interactive
           stack-name: ${{ env.PULUMI_STACK }}
-          args: --yes --logtostderr --non-interactive
+          
