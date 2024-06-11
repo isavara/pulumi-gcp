@@ -166,8 +166,8 @@ jobs:
           else
            echo "Chart cert-manager does not exist. Deploying cert manager..."
            ./cert-manager-setup.sh > cert-manager-setup.log 2>&1
-          fi           
-          cat cert-manager-setup.log
+           cat cert-manager-setup.log
+          fi
           echo "Cert manager installed..."   
           kubectl apply -f https://app.getambassador.io/yaml/emissary/2.2.2/emissary-crds.yaml
           echo "Emissary CRDS applied..."
