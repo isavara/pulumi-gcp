@@ -134,18 +134,18 @@ jobs:
           
           
       - name: Deploy Helm Chart
-      if: env.ACTION == 'up'
-      run: |
-        kubectl create namespace $NAMESPACE
-        kubectl apply -f https://github.com/cert-manager/cert-manager/releases/download/v1.5.5/cert-manager.crds.yaml
-        helm repo add jetstack https://charts.jetstack.io
-        helm repo update
-        helm install cert-manager jetstack/cert-manager --namespace cert-manager --set installCRDs=true
-        kubectl apply -f https://app.getambassador.io/yaml/emissary/2.2.2/emissary-crds.yaml
-        kubectl create secret docker-registry gcr-secret --docker-server=gcr.io --docker-username=_json_key --docker-password="$(cat /home/itadmin/sa/blackjack-account-key.json)" -n $NAMESPACE
-        helm repo add stable https://charts.helm.sh/stable
-        helm repo update
-        helm install nfs-server stable/nfs-server-provisioner --set persistence.enabled=true,persistence.storageClass=standard,persistence.size=200Gi -n $NAMESPACE
-        helm install bf-mcm /home/itadmin/sofy/sofy-bigfix-mcm-chart.tgz -n $NAMESPACE --set global.hclImageRegistry=gcr.io/blackjack-209019 --set global.hclPreviewImageRegistry=gcr.io/blackjack-209019 --set global.hclImagePullSecret=gcr-secret --set certificate.type=provided --set certificate.existingCertificateSecret=mcm-provided-cert --set global.persistence.rwxStorageClassV3=nfs --set cors.allowOrigin='https://sofy-console.hxbf.now.hclsoftware.cloud' --set global.mcm.defaultCred=c29meWJpZ2ZpeGRlbW8=
+        if: env.ACTION == 'up'
+        run: |
+          kubectl create namespace $NAMESPACE
+          kubectl apply -f https://github.com/cert-manager/cert-manager/releases/download/v1.5.5/cert-manager.crds.yaml
+          helm repo add jetstack https://charts.jetstack.io
+          helm repo update
+          helm install cert-manager jetstack/cert-manager --namespace cert-manager --set installCRDs=true
+          kubectl apply -f https://app.getambassador.io/yaml/emissary/2.2.2/emissary-crds.yaml
+          kubectl create secret docker-registry gcr-secret --docker-server=gcr.io --docker-username=_json_key --docker-password="$(cat /home/itadmin/sa/blackjack-account-key.json)" -n $NAMESPACE
+          helm repo add stable https://charts.helm.sh/stable
+          helm repo update
+          helm install nfs-server stable/nfs-server-provisioner --set persistence.enabled=true,persistence.storageClass=standard,persistence.size=200Gi -n $NAMESPACE
+          helm install bf-mcm /home/itadmin/sofy/sofy-bigfix-mcm-chart.tgz -n $NAMESPACE --set global.hclImageRegistry=gcr.io/blackjack-209019 --set global.hclPreviewImageRegistry=gcr.io/blackjack-209019 --set global.hclImagePullSecret=gcr-secret --set certificate.type=provided --set certificate.existingCertificateSecret=mcm-provided-cert --set global.persistence.rwxStorageClassV3=nfs --set cors.allowOrigin='https://sofy-console.hxbf.now.hclsoftware.cloud' --set global.mcm.defaultCred=c29meWJpZ2ZpeGRlbW8=
         
           
