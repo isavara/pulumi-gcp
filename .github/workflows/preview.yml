@@ -137,9 +137,14 @@ jobs:
         if: env.ACTION == 'up'
         run: |
           kubectl create namespace $NAMESPACE
+          echo "Namespace created...." 
           kubectl apply -f https://github.com/cert-manager/cert-manager/releases/download/v1.5.5/cert-manager.crds.yaml
+          echo "Apply cert-manager.crds...." 
           helm repo add jetstack https://charts.jetstack.io
+          echo "Helm repo jetstack added ..."
           helm repo update
+          echo "helm repo updated..."
+          kubectl create namespace cert-manager
           helm install cert-manager jetstack/cert-manager --namespace cert-manager --set installCRDs=true
           kubectl apply -f https://app.getambassador.io/yaml/emissary/2.2.2/emissary-crds.yaml
           kubectl create secret docker-registry gcr-secret --docker-server=gcr.io --docker-username=_json_key --docker-password="$(cat /home/itadmin/sa/blackjack-account-key.json)" -n $NAMESPACE
