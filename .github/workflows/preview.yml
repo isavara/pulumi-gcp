@@ -160,7 +160,13 @@ jobs:
           sed -i "s/DELETION=.*/DELETION=Y/" cert-manager-setup.sh
           sed -i "s/DELETION^^/DELETION/g" cert-manager-setup.sh
           chmod +x cert-manager-setup.sh
-          ./cert-manager-setup.sh > cert-manager-setup.log 2>&1 
+          if helm ls -n cert-manager | grep -q cert-manager; then
+           echo "Chart cert-manager exists. Deleting..."
+           helm delete cert-manager -n cert-manager
+          else
+           echo "Chart cert-manager does not exist. Deploying cert manager..."
+           ./cert-manager-setup.sh > cert-manager-setup.log 2>&1
+          fi           
           cat cert-manager-setup.log
           echo "Cert manager installed..."   
           kubectl apply -f https://app.getambassador.io/yaml/emissary/2.2.2/emissary-crds.yaml
