@@ -161,8 +161,8 @@ jobs:
           sed -i "s/DELETION^^/DELETION/g" cert-manager-setup.sh
           chmod +x cert-manager-setup.sh
           if helm ls -n cert-manager | grep -q cert-manager; then
-           echo "Chart cert-manager exists. Deleting..."
-           helm delete cert-manager -n cert-manager
+           echo "Chart cert-manager exists." 
+          #  helm delete cert-manager -n cert-manager
           else
            echo "Chart cert-manager does not exist. Deploying cert manager..."
            ./cert-manager-setup.sh > cert-manager-setup.log 2>&1
@@ -171,6 +171,12 @@ jobs:
           echo "Cert manager installed..."   
           kubectl apply -f https://app.getambassador.io/yaml/emissary/2.2.2/emissary-crds.yaml
           echo "Emissary CRDS applied..."
+          if kubectl get secret gcr-secret -n hxbf-1 &> /dev/null; then
+           echo "gcr-secret already exists. Skipping installation..."
+          else
+            echo "gcr-secret does not exist. Creating..."
+            kubectl create secret docker-registry gcr-secret --docker-server=gcr.io --docker-username=_json_key --docker-password="$(cat /home/itadmin/sa/blackjack-account-key.json)" -n $NAMESPACE
+          fi
           kubectl create secret docker-registry gcr-secret --docker-server=gcr.io --docker-username=_json_key --docker-password="$(cat /home/itadmin/sa/blackjack-account-key.json)" -n $NAMESPACE
           echo "Created GCP secret..."
           helm repo add stable https://charts.helm.sh/stable
