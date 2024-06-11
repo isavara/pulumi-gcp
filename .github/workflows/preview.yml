@@ -136,21 +136,37 @@ jobs:
       - name: Deploy Helm Chart
         if: env.ACTION == 'up'
         run: |
-          kubectl create namespace $NAMESPACE
+          if ! kubectl get namespace $NAMESPACE &> /dev/null; then
+           echo "Namespace $NAMESPACE does not exist. Creating..."
+           kubectl create namespace $NAMESPACE
+          else
+           echo "Namespace $NAMESPACE already exists. Skipping creation..."
+          fi
           echo "Namespace created...." 
           kubectl apply -f https://github.com/cert-manager/cert-manager/releases/download/v1.5.5/cert-manager.crds.yaml
           echo "Apply cert-manager.crds...." 
           helm repo add jetstack https://charts.jetstack.io
           echo "Helm repo jetstack added ..."
           helm repo update
-          echo "helm repo updated..."
-          kubectl create namespace cert-manager
+          echo "helm repo updated..."          
+          if ! kubectl get namespace cert-manager &> /dev/null; then
+           echo "Namespace $NAMESPACE does not exist. Creating..."
+           kubectl create namespace cert-manager
+          else
+           echo "Namespace cert-manager already exists. Skipping creation..."
+          fi
           helm install cert-manager jetstack/cert-manager --namespace cert-manager --set installCRDs=true
+          echo "Cert manager installed..."   
           kubectl apply -f https://app.getambassador.io/yaml/emissary/2.2.2/emissary-crds.yaml
+          echo "Emissary CRDS applied..."
           kubectl create secret docker-registry gcr-secret --docker-server=gcr.io --docker-username=_json_key --docker-password="$(cat /home/itadmin/sa/blackjack-account-key.json)" -n $NAMESPACE
+          echo "Created GCP secret..."
           helm repo add stable https://charts.helm.sh/stable
+          echo "Helm repo stable added..."
           helm repo update
+          echo "helm repo updated..."
           helm install nfs-server stable/nfs-server-provisioner --set persistence.enabled=true,persistence.storageClass=standard,persistence.size=200Gi -n $NAMESPACE
+          echo "NFS configured..."
           helm install bf-mcm /home/itadmin/sofy/sofy-bigfix-mcm-chart.tgz -n $NAMESPACE --set global.hclImageRegistry=gcr.io/blackjack-209019 --set global.hclPreviewImageRegistry=gcr.io/blackjack-209019 --set global.hclImagePullSecret=gcr-secret --set certificate.type=provided --set certificate.existingCertificateSecret=mcm-provided-cert --set global.persistence.rwxStorageClassV3=nfs --set cors.allowOrigin='https://sofy-console.hxbf.now.hclsoftware.cloud' --set global.mcm.defaultCred=c29meWJpZ2ZpeGRlbW8=
-        
+          echo "Installed Bigfix MCM Sofy helm chart..."
           
