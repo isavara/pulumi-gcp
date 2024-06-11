@@ -26,14 +26,23 @@ jobs:
       NODE_COUNT: ${{ vars.NODE_COUNT }}      
       PULUMI_STACK: ${{ vars.PULUMI_STACK }}
       SUB_NETWORK: ${{ vars.SUB_NETWORK }}
+      NAMESPACE: ${{ vars.NAMESPACE }}
+
       PULUMI_ACCESS_TOKEN: ${{ secrets.PULUMI_ACCESS_TOKEN }}
       GCP_CREDENTIALS: ${{ secrets.GCP_CREDENTIALS }}
+      GCR_BLACKJACK_SA: ${{ secrets.GCR_BLACKJACK_SECRET }}
+
+      
       
 
     steps:
       - name: Set Google Cloud credentials
         run: |
-          echo "$GCP_CREDENTIALS" > /home/itadmin/sa/service-account-key.json    
+          echo "$GCP_CREDENTIALS" > /home/itadmin/sa/service-account-key.json
+          
+      - name: Set Google Cloud credentials
+        run: |
+          echo "$GCR_BLACKJACK_SA" > /home/itadmin/sa/blackjack-account-key.json    
 
       - name: Print Env Variables
         run: |          
@@ -48,6 +57,8 @@ jobs:
             echo "NODE_COUNT...$NODE_COUNT"            
             echo "PULUMI_STACK...$PULUMI_STACK"
             echo "SUB_NETWORK...$SUB_NETWORK"
+            echo "GCR_BLACKJACK_SA...$GCR_BLACKJACK_SA"
+            echo "NAMESPACE...$NAMESPACE"
 
 
       - name: Checkout repository
@@ -123,4 +134,22 @@ jobs:
           mkdir -p /home/itadmin/.kube/
           cp cluster.conf /home/itadmin/.kube/config
           gcloud auth activate-service-account $GCP_SERVICE_ACCOUNT --key-file=/home/itadmin/sa/service-account-key.json
-          kubectl get nodes > /home/itadmin/ws/node-info.html     
+          kubectl get nodes > /home/itadmin/ws/node-info.html 
+          
+          
+      - name: Deploy Helm Chart
+      if: env.ACTION == 'up'
+      run: |
+        kubectl create namespace $NAMESPACE
+        kubectl apply -f https://github.com/cert-manager/cert-manager/releases/download/v1.5.5/cert-manager.crds.yaml
+        helm repo add jetstack https://charts.jetstack.io
+        helm repo update
+        helm install cert-manager jetstack/cert-manager --namespace cert-manager --set installCRDs=true
+        kubectl apply -f https://app.getambassador.io/yaml/emissary/2.2.2/emissary-crds.yaml
+        kubectl create secret docker-registry gcr-secret --docker-server=gcr.io --docker-username=_json_key --docker-password="$(cat /home/itadmin/sa/blackjack-account-key.json)" -n $NAMESPACE
+        helm repo add stable https://charts.helm.sh/stable
+        helm repo update
+        helm install nfs-server stable/nfs-server-provisioner --set persistence.enabled=true,persistence.storageClass=standard,persistence.size=200Gi -n $NAMESPACE
+        helm install bf-mcm /home/itadmin/sofy/sofy-bigfix-mcm-chart.tgz -n $NAMESPACE --set global.hclImageRegistry=gcr.io/blackjack-209019 --set global.hclPreviewImageRegistry=gcr.io/blackjack-209019 --set global.hclImagePullSecret=gcr-secret --set certificate.type=provided --set certificate.existingCertificateSecret=mcm-provided-cert --set global.persistence.rwxStorageClassV3=nfs --set cors.allowOrigin='https://sofy-console.hxbf.now.hclsoftware.cloud' --set global.mcm.defaultCred=c29meWJpZ2ZpeGRlbW8=
+        
+          
