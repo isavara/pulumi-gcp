@@ -12,7 +12,7 @@ on:
 jobs:
   pulumi-up:
     name: pulumi-up
-    runs-on: pulumi-rome-runner-label-1
+    runs-on: gcp-pulumi-runner-label-1
     environment: dev
 
     env:
@@ -122,5 +122,5 @@ jobs:
           pulumi stack output kubeconfig --show-secrets > cluster.conf
           mkdir -p /home/itadmin/ws/.kube/
           cp cluster.conf /home/itadmin/ws/.kube/config
-          gcloud auth activate-service-account --key-file=/home/itadmin/sa/service-account-key.json
+          gcloud auth activate-service-account $GCP_SERVICE_ACCOUNT --key-file=/home/itadmin/sa/service-account-key.json
           kubectl get nodes > /home/itadmin/ws/node-info.html     
