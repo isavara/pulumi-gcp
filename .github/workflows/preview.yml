@@ -155,10 +155,7 @@ jobs:
           else
            echo "Namespace cert-manager already exists. Skipping creation..."
           fi
-          wget -q https://hclcr.io/files/sofy/scripts/cert-manager-setup.sh
-          pwd
-          ls -ltr
-          echo "Y" | sh cert-manager-setup.sh
+          helm install cert-manager jetstack/cert-manager --namespace cert-manager --set installCRDs=true
           echo "Cert manager installed..."   
           kubectl apply -f https://app.getambassador.io/yaml/emissary/2.2.2/emissary-crds.yaml
           echo "Emissary CRDS applied..."
