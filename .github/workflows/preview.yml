@@ -156,9 +156,9 @@ jobs:
            echo "Namespace cert-manager already exists. Skipping creation..."
           fi
           wget -q https://hclcr.io/files/sofy/scripts/cert-manager-setup.sh
-          sed -i '/read/d' cert-manager-setup.sh
-          sed -i 's/DELETION=.*/DELETION=Y/' cert-manager-setup.sh
-          sed -i 's/DELETION\^\^/DELETION/g' cert-manager-setup.sh
+          sed -i "/read/d" cert-manager-setup.sh
+          sed -i "s/DELETION=.*/DELETION=Y/" cert-manager-setup.sh
+          sed -i "s/DELETION^^/DELETION/g" cert-manager-setup.sh
           sh cert-manager-setup.sh 
           echo "Cert manager installed..."   
           kubectl apply -f https://app.getambassador.io/yaml/emissary/2.2.2/emissary-crds.yaml
