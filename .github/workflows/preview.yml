@@ -27,14 +27,10 @@ jobs:
       PULUMI_STACK: ${{ vars.PULUMI_STACK }}
       SUB_NETWORK: ${{ vars.SUB_NETWORK }}
       NAMESPACE: ${{ vars.NAMESPACE }}
-
       PULUMI_ACCESS_TOKEN: ${{ secrets.PULUMI_ACCESS_TOKEN }}
       GCP_CREDENTIALS: ${{ secrets.GCP_CREDENTIALS }}
       GCR_BLACKJACK_SA: ${{ secrets.GCR_BLACKJACK_SECRET }}
-
-      
-      
-
+ 
     steps:
       - name: Set Google Cloud credentials
         run: |
