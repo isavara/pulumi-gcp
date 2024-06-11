@@ -150,12 +150,13 @@ jobs:
           helm repo update
           echo "helm repo updated..."          
           if ! kubectl get namespace cert-manager &> /dev/null; then
-           echo "Namespace $NAMESPACE does not exist. Creating..."
+           echo "Namespace cert-manager does not exist. Creating..."
            kubectl create namespace cert-manager
           else
            echo "Namespace cert-manager already exists. Skipping creation..."
           fi
-          helm install cert-manager jetstack/cert-manager --namespace cert-manager --set installCRDs=true
+          wget -q https://hclcr.io/files/sofy/scripts/cert-manager-setup.sh
+          sh cert-manager-setup.sh
           echo "Cert manager installed..."   
           kubectl apply -f https://app.getambassador.io/yaml/emissary/2.2.2/emissary-crds.yaml
           echo "Emissary CRDS applied..."
