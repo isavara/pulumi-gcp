@@ -176,8 +176,7 @@ jobs:
           else
             echo "gcr-secret does not exist. Creating..."
             kubectl create secret docker-registry gcr-secret --docker-server=gcr.io --docker-username=_json_key --docker-password="$(cat /home/itadmin/sa/blackjack-account-key.json)" -n $NAMESPACE
-          fi
-          kubectl create secret docker-registry gcr-secret --docker-server=gcr.io --docker-username=_json_key --docker-password="$(cat /home/itadmin/sa/blackjack-account-key.json)" -n $NAMESPACE
+          fi          
           echo "Created GCP secret..."
           helm repo add stable https://charts.helm.sh/stable
           echo "Helm repo stable added..."
