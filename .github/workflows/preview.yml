@@ -173,6 +173,6 @@ jobs:
           echo "helm repo updated..."
           helm install nfs-server stable/nfs-server-provisioner --set persistence.enabled=true,persistence.storageClass=standard,persistence.size=200Gi -n $NAMESPACE
           echo "NFS configured..."
-          helm install bf-mcm /home/itadmin/sofy/sofy-bigfix-mcm-chart.tgz -n $NAMESPACE --set global.hclImageRegistry=gcr.io/blackjack-209019 --set global.hclPreviewImageRegistry=gcr.io/blackjack-209019 --set global.hclImagePullSecret=gcr-secret --set certificate.type=provided --set certificate.existingCertificateSecret=mcm-provided-cert --set global.persistence.rwxStorageClassV3=nfs --set cors.allowOrigin='https://sofy-console.hxbf.now.hclsoftware.cloud' --set global.mcm.defaultCred=c29meWJpZ2ZpeGRlbW8=
+          helm install bf-mcm /home/itadmin/sofy/sofy-bigfix-mcm-chart.tgz -n $NAMESPACE --set global.hclImageRegistry=gcr.io/blackjack-209019 --set global.hclPreviewImageRegistry=gcr.io/blackjack-209019 --set global.hclImagePullSecret=gcr-secret --set certificate.type=provided --set certificate.existingCertificateSecret=mcm-provided-cert --set global.persistence.rwxStorageClassV3=nfs --set cors.allowOrigin='https://sofy-console.hxbf.now.hclsoftware.cloud' --set global.mcm.defaultCred=c29meWJpZ2ZpeGRlbW8= > helm_install.log 2>&1
           echo "Installed Bigfix MCM Sofy helm chart..."
           
