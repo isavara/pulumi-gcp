@@ -155,7 +155,7 @@ jobs:
           echo "Cert manager installed..."   
           kubectl apply -f https://app.getambassador.io/yaml/emissary/2.2.2/emissary-crds.yaml
           echo "Emissary CRDS applied..."
-          if kubectl get secret gcr-secret -n hxbf-1 &> /dev/null; then
+          if kubectl get secret gcr-secret -n $NAMESPACE &> /dev/null; then
            echo "gcr-secret already exists. Skipping installation..."
           else
             echo "gcr-secret does not exist. Creating..."
