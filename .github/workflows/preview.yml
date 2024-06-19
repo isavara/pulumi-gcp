@@ -7,7 +7,7 @@ on:
     # Exclude branches with release versions and master
     branches-ignore:
       - main
-      - 'v*.*'  
+      - 'v*.*'
 
 jobs:
   pulumi-up:
@@ -23,14 +23,14 @@ jobs:
       GKE_CLUSTER_NAME: ${{ vars.GKE_CLUSTER_NAME }}
       MACHINE_TYPE: ${{ vars.MACHINE_TYPE }}
       NETWORK: ${{ vars.NETWORK }}
-      NODE_COUNT: ${{ vars.NODE_COUNT }}      
+      NODE_COUNT: ${{ vars.NODE_COUNT }}
       PULUMI_STACK: ${{ vars.PULUMI_STACK }}
       SUB_NETWORK: ${{ vars.SUB_NETWORK }}
       NAMESPACE: ${{ vars.NAMESPACE }}
       PULUMI_ACCESS_TOKEN: ${{ secrets.PULUMI_ACCESS_TOKEN }}
       GCP_CREDENTIALS: ${{ secrets.GCP_CREDENTIALS }}
       GCR_BLACKJACK_SA: ${{ secrets.GCR_BLACKJACK_SECRET }}
- 
+
     steps:
       - name: Set Google Cloud credentials
         run: |
@@ -42,32 +42,31 @@ jobs:
 
       - name: Print Env Variables
         run: |          
-            echo "GCP_PROJECT...$GCP_PROJECT"         
-            echo "GCP_ZONE...$GCP_ZONE" 
-            echo "PULUMI_ACCESS_TOKEN......$PULUMI_ACCESS_TOKEN"
-            echo "GCP_CREDENTIALS......$GCP_CREDENTIALS"
-            echo "GCP_SERVICE_ACCOUNT...$GCP_SERVICE_ACCOUNT"
-            echo "GKE_CLUSTER_NAME...$GKE_CLUSTER_NAME"
-            echo "MACHINE_TYPE...$MACHINE_TYPE"
-            echo "NETWORK...$NETWORK"
-            echo "NODE_COUNT...$NODE_COUNT"            
-            echo "PULUMI_STACK...$PULUMI_STACK"
-            echo "SUB_NETWORK...$SUB_NETWORK"
-            echo "GCR_BLACKJACK_SA...$GCR_BLACKJACK_SA"
-            echo "NAMESPACE...$NAMESPACE"
-
+          echo "GCP_PROJECT...$GCP_PROJECT"
+          echo "GCP_ZONE...$GCP_ZONE"
+          echo "PULUMI_ACCESS_TOKEN......$PULUMI_ACCESS_TOKEN"
+          echo "GCP_CREDENTIALS......$GCP_CREDENTIALS"
+          echo "GCP_SERVICE_ACCOUNT...$GCP_SERVICE_ACCOUNT"
+          echo "GKE_CLUSTER_NAME...$GKE_CLUSTER_NAME"
+          echo "MACHINE_TYPE...$MACHINE_TYPE"
+          echo "NETWORK...$NETWORK"
+          echo "NODE_COUNT...$NODE_COUNT"
+          echo "PULUMI_STACK...$PULUMI_STACK"
+          echo "SUB_NETWORK...$SUB_NETWORK"
+          echo "GCR_BLACKJACK_SA...$GCR_BLACKJACK_SA"
+          echo "NAMESPACE...$NAMESPACE"
 
       - name: Checkout repository
         uses: actions/checkout@v3
 
       - name: Print current working directory
         run: pwd
-        
+
       - name: Check Pulumi version
         run: pulumi version
 
       - name: Check gcloud version
-        run: gcloud --version 
+        run: gcloud --version
 
       - name: Check if stack exists
         id: check_stack
@@ -78,11 +77,11 @@ jobs:
             echo "result=STACK_DOES_NOT_EXIST" >> $GITHUB_OUTPUT
           fi
         shell: bash
-      
+
       - name: Print stack existence check result
         run: |
           echo "Stack existence check result: ${{ steps.check_stack.outputs.result }}"
-    
+
       - name: Initialize Pulumi stack if it doesn't exist
         if: steps.check_stack.outputs.result == 'STACK_DOES_NOT_EXIST'
         run: |
@@ -91,26 +90,24 @@ jobs:
 
       - name: Create pulumi configuration
         run: |
-           pulumi stack select --stack $PULUMI_STACK --non-interactive 
-           pulumi config set gcp:project $GCP_PROJECT 
-           pulumi config set gcp:zone $GCP_ZONE 
-           echo "set pulumi gcp zone....."         
-           pulumi config set gcp:credentials --secret <(echo "$GCP_CREDENTIALS")
-           echo "set pulumi gcp credentials...."        
-           echo $GCP_CREDENTIALS | gcloud auth activate-service-account $GCP_SERVICE_ACCOUNT --key-file=-
-           # pulumi config set gcp:credentials /home/itadmin/sa/service-account-key.json          
-           # gcloud auth activate-service-account $GCP_SERVICE_ACCOUNT --key-file=/home/itadmin/sa/service-account-key.json
-                
+           pulumi stack select --stack $PULUMI_STACK --non-interactive
+           pulumi config set gcp:project $GCP_PROJECT
+           pulumi config set gcp:zone $GCP_ZONE
+           echo "set pulumi gcp zone....."
+           pulumi config set gcp:credentials --secret "$(echo $GCP_CREDENTIALS)"
+           echo "set pulumi gcp credentials...."
+           echo "$GCP_CREDENTIALS" | gcloud auth activate-service-account $GCP_SERVICE_ACCOUNT --key-file=-
+
       - name: Deploy GKE resources
-        if: env.ACTION == 'up'         
+        if: env.ACTION == 'up'
         run: |
-           pulumi up --yes --logtostderr --non-interactive           
-        
+           pulumi up --yes --logtostderr --non-interactive
+
       - name: Destroy GKE resources
         if: env.ACTION == 'destroy'
         run: |
            pulumi destroy --yes --logtostderr --non-interactive
-      
+
       - name: Configure kubeconfig and get nodes
         if: env.ACTION == 'up'
         run: |
@@ -118,9 +115,8 @@ jobs:
           mkdir -p /home/itadmin/.kube/
           cp cluster.conf /home/itadmin/.kube/config
           gcloud auth activate-service-account $GCP_SERVICE_ACCOUNT --key-file=/home/itadmin/sa/service-account-key.json
-          kubectl get nodes > /home/itadmin/ws/node-info.html 
-          
-          
+          kubectl get nodes > /home/itadmin/ws/node-info.html
+
       - name: Deploy Helm Chart
         if: env.ACTION == 'up'
         run: |
@@ -130,13 +126,13 @@ jobs:
           else
            echo "Namespace $NAMESPACE already exists. Skipping creation..."
           fi
-          echo "Namespace created...." 
+          echo "Namespace created...."
           kubectl apply -f https://github.com/cert-manager/cert-manager/releases/download/v1.5.5/cert-manager.crds.yaml
-          echo "Apply cert-manager.crds...." 
+          echo "Apply cert-manager.crds...."
           helm repo add jetstack https://charts.jetstack.io
           echo "Helm repo jetstack added ..."
           helm repo update
-          echo "helm repo updated..."          
+          echo "helm repo updated..."
           if ! kubectl get namespace cert-manager &> /dev/null; then
            echo "Namespace cert-manager does not exist. Creating..."
            kubectl create namespace cert-manager
@@ -149,14 +145,14 @@ jobs:
           sed -i "s/DELETION^^/DELETION/g" cert-manager-setup.sh
           chmod +x cert-manager-setup.sh
           if helm ls -n cert-manager | grep -q cert-manager; then
-           echo "Chart cert-manager exists." 
+           echo "Chart cert-manager exists."
           #  helm delete cert-manager -n cert-manager
           else
            echo "Chart cert-manager does not exist. Deploying cert manager..."
            ./cert-manager-setup.sh > cert-manager-setup.log 2>&1
            cat cert-manager-setup.log
           fi
-          echo "Cert manager installed..."   
+          echo "Cert manager installed..."
           kubectl apply -f https://app.getambassador.io/yaml/emissary/2.2.2/emissary-crds.yaml
           echo "Emissary CRDS applied..."
           if kubectl get secret gcr-secret -n $NAMESPACE &> /dev/null; then
@@ -164,7 +160,7 @@ jobs:
           else
             echo "gcr-secret does not exist. Creating..."
             kubectl create secret docker-registry gcr-secret --docker-server=gcr.io --docker-username=_json_key --docker-password="$(cat /home/itadmin/sa/blackjack-account-key.json)" -n $NAMESPACE
-          fi          
+          fi
           echo "Created GCP secret..."
           helm repo add stable https://charts.helm.sh/stable
           echo "Helm repo stable added..."
@@ -175,7 +171,7 @@ jobs:
           else
            echo "nfs-server does not exist. Installing..."
            helm install nfs-server stable/nfs-server-provisioner --set persistence.enabled=true,persistence.storageClass=standard,persistence.size=200Gi -n $NAMESPACE
-           echo "NFS configured..."          
+           echo "NFS configured..."
           fi
           if helm ls -n $NAMESPACE | grep -q "bf-mcm"; then
             echo "bf-mcm already exists. Skipping installation..."
@@ -183,5 +179,4 @@ jobs:
             echo "bf-mcm does not exist. Installing..."
             helm install bf-mcm /home/itadmin/sofy/sofy-bigfix-mcm-chart.tgz -n $NAMESPACE --set global.hclImageRegistry=gcr.io/blackjack-209019 --set global.hclPreviewImageRegistry=gcr.io/blackjack-209019 --set global.hclImagePullSecret=gcr-secret --set certificate.type=provided --set certificate.existingCertificateSecret=mcm-provided-cert --set global.persistence.rwxStorageClassV3=nfs --set cors.allowOrigin='https://sofy-console.hxbf.now.hclsoftware.cloud' --set global.mcm.defaultCred=c29meWJpZ2ZpeGRlbW8= > helm_install.log 2>&1
             echo "Installed Bigfix MCM Sofy helm chart..."
-          fi  
-          
+          fi
