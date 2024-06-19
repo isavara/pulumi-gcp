@@ -32,14 +32,6 @@ jobs:
       GCR_BLACKJACK_SA: ${{ secrets.GCR_BLACKJACK_SECRET }}
 
     steps:
-      - name: Set Google Cloud credentials
-        run: |
-          echo "$GCP_CREDENTIALS" > /home/itadmin/sa/service-account-key.json
-          
-      - name: Set Google Cloud credentials
-        run: |
-          echo "$GCR_BLACKJACK_SA" > /home/itadmin/sa/blackjack-account-key.json    
-
       - name: Print Env Variables
         run: |          
           echo "GCP_PROJECT...$GCP_PROJECT"
