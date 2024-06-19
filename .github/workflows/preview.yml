@@ -97,7 +97,7 @@ jobs:
            pulumi config set gcp:credentials --secret "$(echo $GCP_CREDENTIALS)"
            echo "set pulumi gcp credentials...."
            echo "$GCP_CREDENTIALS" | gcloud auth activate-service-account $GCP_SERVICE_ACCOUNT --key-file=-
-           echo "activate gcloud service account...."
+           echo "activate gcloud service account...done."
 
       - name: Deploy GKE resources
         if: env.ACTION == 'up'
