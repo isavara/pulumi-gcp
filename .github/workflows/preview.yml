@@ -95,9 +95,9 @@ jobs:
            pulumi config set gcp:project $GCP_PROJECT 
            pulumi config set gcp:zone $GCP_ZONE 
            echo "set pulumi gcp zone....."         
-           pulumi config set gcp:credentials $GCP_CREDENTIALS --secret
+           pulumi config set gcp:credentials --secret <(echo "$GCP_CREDENTIALS")
            echo "set pulumi gcp credentials...."        
-           gcloud auth activate-service-account $GCP_SERVICE_ACCOUNT --key-file=$GCP_CREDENTIALS
+           echo $GCP_CREDENTIALS | gcloud auth activate-service-account $GCP_SERVICE_ACCOUNT --key-file=-
            # pulumi config set gcp:credentials /home/itadmin/sa/service-account-key.json          
            # gcloud auth activate-service-account $GCP_SERVICE_ACCOUNT --key-file=/home/itadmin/sa/service-account-key.json
                 
