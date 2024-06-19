@@ -166,7 +166,7 @@ jobs:
           echo "Helm repo stable added..."
           helm repo update
           echo "helm repo updated..."
-          if helm ls -n hxbf-1 | grep -q "nfs-server"; then
+          if helm ls -n $NAMESPACE | grep -q "nfs-server"; then
            echo "nfs-server already exists. Skipping installation..."
           else
            echo "nfs-server does not exist. Installing..."
