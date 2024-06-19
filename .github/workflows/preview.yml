@@ -93,8 +93,10 @@ jobs:
         run: |
            pulumi stack select --stack $PULUMI_STACK --non-interactive 
            pulumi config set gcp:project $GCP_PROJECT 
-           pulumi config set gcp:zone $GCP_ZONE          
-           pulumi config set gcp:credentials $GCP_CREDENTIALS         
+           pulumi config set gcp:zone $GCP_ZONE 
+           echo "set pulumi gcp zone....."         
+           pulumi config set gcp:credentials $GCP_CREDENTIALS
+           echo "set pulumi gcp credentials...."        
            gcloud auth activate-service-account $GCP_SERVICE_ACCOUNT --key-file=$GCP_CREDENTIALS
            # pulumi config set gcp:credentials /home/itadmin/sa/service-account-key.json          
            # gcloud auth activate-service-account $GCP_SERVICE_ACCOUNT --key-file=/home/itadmin/sa/service-account-key.json
