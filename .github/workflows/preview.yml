@@ -32,14 +32,6 @@ jobs:
       GCR_BLACKJACK_SA: ${{ secrets.GCR_BLACKJACK_SECRET }}
 
     steps:
-      - name: Set Google Cloud credentials
-        run: |
-          echo "$GCP_CREDENTIALS" > /home/itadmin/sa/service-account-key.json
-          
-      - name: Set Google Cloud credentials
-        run: |
-          echo "$GCR_BLACKJACK_SA" > /home/itadmin/sa/blackjack-account-key.json    
-
       - name: Print Env Variables
         run: |          
           echo "GCP_PROJECT...$GCP_PROJECT"
@@ -83,7 +75,7 @@ jobs:
           echo "Stack existence check result: ${{ steps.check_stack.outputs.result }}"
 
       - name: Initialize Pulumi stack if it doesn't exist
-        if: steps.check_stack.outputs.result == 'STACK_DOES_NOT_EXIST'
+        if: steps.check_stack.outputs.result == 'STACK DOES NOT EXIST'
         run: |
            echo "Initializing Pulumi stack since it doesn't exist..."
            pulumi stack init $PULUMI_STACK
@@ -94,7 +86,7 @@ jobs:
            pulumi config set gcp:project $GCP_PROJECT
            pulumi config set gcp:zone $GCP_ZONE
            echo "set pulumi gcp zone....."
-           pulumi config set gcp:credentials --secret "$(echo $GCP_CREDENTIALS)"
+           pulumi config set gcp:credentials --secret <(echo "$GCP_CREDENTIALS")
            echo "set pulumi gcp credentials...."
            echo "$GCP_CREDENTIALS" | gcloud auth activate-service-account $GCP_SERVICE_ACCOUNT --key-file=-
 
@@ -114,7 +106,7 @@ jobs:
           pulumi stack output kubeconfig --show-secrets > cluster.conf
           mkdir -p /home/itadmin/.kube/
           cp cluster.conf /home/itadmin/.kube/config
-          gcloud auth activate-service-account $GCP_SERVICE_ACCOUNT --key-file=/home/itadmin/sa/service-account-key.json
+          echo "$GCP_CREDENTIALS" | gcloud auth activate-service-account $GCP_SERVICE_ACCOUNT --key-file=-
           kubectl get nodes > /home/itadmin/ws/node-info.html
 
       - name: Deploy Helm Chart
@@ -159,7 +151,7 @@ jobs:
            echo "gcr-secret already exists. Skipping installation..."
           else
             echo "gcr-secret does not exist. Creating..."
-            kubectl create secret docker-registry gcr-secret --docker-server=gcr.io --docker-username=_json_key --docker-password="$(cat /home/itadmin/sa/blackjack-account-key.json)" -n $NAMESPACE
+            kubectl create secret docker-registry gcr-secret --docker-server=gcr.io --docker-username=_json_key --docker-password="$GCR_BLACKJACK_SA" -n $NAMESPACE
           fi
           echo "Created GCP secret..."
           helm repo add stable https://charts.helm.sh/stable
