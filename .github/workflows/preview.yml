@@ -32,22 +32,6 @@ jobs:
       GCR_BLACKJACK_SA: ${{ secrets.GCR_BLACKJACK_SECRET }}
 
     steps:
-      - name: Print Env Variables
-        run: |          
-          echo "GCP_PROJECT...$GCP_PROJECT"
-          echo "GCP_ZONE...$GCP_ZONE"
-          echo "PULUMI_ACCESS_TOKEN......$PULUMI_ACCESS_TOKEN"
-          echo "GCP_CREDENTIALS......$GCP_CREDENTIALS"
-          echo "GCP_SERVICE_ACCOUNT...$GCP_SERVICE_ACCOUNT"
-          echo "GKE_CLUSTER_NAME...$GKE_CLUSTER_NAME"
-          echo "MACHINE_TYPE...$MACHINE_TYPE"
-          echo "NETWORK...$NETWORK"
-          echo "NODE_COUNT...$NODE_COUNT"
-          echo "PULUMI_STACK...$PULUMI_STACK"
-          echo "SUB_NETWORK...$SUB_NETWORK"
-          echo "GCR_BLACKJACK_SA...$GCR_BLACKJACK_SA"
-          echo "NAMESPACE...$NAMESPACE"
-
       - name: Checkout repository
         uses: actions/checkout@v3
 
