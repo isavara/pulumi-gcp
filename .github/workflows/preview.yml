@@ -166,7 +166,7 @@ jobs:
            helm install nfs-server stable/nfs-server-provisioner --set persistence.enabled=true,persistence.storageClass=standard,persistence.size=200Gi -n $NAMESPACE
            echo "NFS configured..."
           fi
-          if helm ls -n $NAMESPACE | grep -q "bf-mcm"; then
+          if helm ls -n abc | grep -q "bf-mcm"; then
             echo "bf-mcm already exists. Skipping installation..."
           else
             echo "bf-mcm does not exist. Installing..."
